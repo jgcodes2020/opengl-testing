@@ -1,5 +1,5 @@
 add_executable(triangle
-  "triangle.cpp"
+  "main.cpp"
 )
 cmrc_add_resource_library(triangle-rc NAMESPACE rc
   "fragment.glsl"

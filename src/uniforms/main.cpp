@@ -1,5 +1,6 @@
 #include <glbinding/gl/enum.h>
 #include <glbinding/gl/functions.h>
+#include "oglc/handles.hpp"
 #define GLFW_INCLUDE_NONE
 #include <glbinding/gl/gl.h>
 #include <glbinding/glbinding.h>
@@ -22,7 +23,8 @@ gl::GLuint indices[] = {
   2, 3, 0
 };
 
-gl::GLuint vbo, vao, ebo, shp;
+gl::GLuint vbo, vao, ebo;
+oglc::ShaderProgram shader;
 
 void setup(GLFWwindow* win) {
   using namespace gl;
@@ -39,34 +41,13 @@ void setup(GLFWwindow* win) {
   // ================================
   {
     auto fs = cmrc::rc::get_filesystem();
-    GLuint vertex_shader, fragment_shader;
-    {
-      auto file = fs.open("/vertex.glsl");
-      vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-      const char* data_begin = file.begin();
-      const GLsizei data_size = file.end() - file.begin();
-      glShaderSource(vertex_shader, 1, &data_begin, &data_size);
-      glCompileShader(vertex_shader);
-    }
-    {
-      auto file = fs.open("/fragment.glsl");
-      fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-      const char* data_begin = file.begin();
-      const GLsizei data_size = file.end() - file.begin();
-      glShaderSource(fragment_shader, 1, &data_begin, &data_size);
-      glCompileShader(fragment_shader);
-    }
-    shp = glCreateProgram();
-    glAttachShader(shp, vertex_shader);
-    glAttachShader(shp, fragment_shader);
-    glLinkProgram(shp);
-    
-    glUseProgram(shp);
-    
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
+    shader = oglc::ShaderProgram {
+      oglc::Shader::fromResource(GL_VERTEX_SHADER, fs.open("/vertex.glsl")),
+      oglc::Shader::fromResource(GL_FRAGMENT_SHADER, fs.open("/fragment.glsl")),
+    };
   }
   
+  shader.use();
   // Construct VBO/VAO/EBO
   glGenBuffers(1, &vbo);
   glGenBuffers(1, &ebo);
@@ -96,7 +77,7 @@ void render(GLFWwindow* win) {
   glClear(GL_COLOR_BUFFER_BIT);
   
   // do our actual rendering
-  glUseProgram(shp);
+  shader.use();
   glBindVertexArray(vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
@@ -135,6 +116,7 @@ int main() {
     glfwPollEvents();
   }
   
+  shader.~ShaderProgram();
   glfwTerminate();
   return 0;
 }

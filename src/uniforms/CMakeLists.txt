@@ -1,5 +1,5 @@
 add_executable(uniforms
-  "uniforms.cpp"
+  "main.cpp"
 )
 cmrc_add_resource_library(uniforms-rc NAMESPACE rc
   "vertex.glsl"

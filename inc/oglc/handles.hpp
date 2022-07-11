@@ -3,6 +3,7 @@
 
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/gl.h>
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -35,7 +36,10 @@ namespace oglc {
     }
     
     ~Shader() {
+      if (m_handle == 0)
+        return;
       gl::glDeleteShader(m_handle);
+      m_handle = 0;
     }
     
   private:
@@ -67,9 +71,11 @@ namespace oglc {
         throw std::logic_error("Some shaders have not been loaded yet");
       }
       
-      // attach each shader
+      // bind shaders and link
       (gl::glAttachShader(m_handle, shaders.m_handle), ...);
       gl::glLinkProgram(m_handle);
+      // I'm not sure why this has to be here but it does.
+      use();
     }
     // not copyable
     ShaderProgram(const ShaderProgram&) = delete;
@@ -79,7 +85,10 @@ namespace oglc {
     ShaderProgram& operator=(ShaderProgram&&) = default;
     
     ~ShaderProgram() {
+      if (m_handle == 0)
+        return;
       gl::glDeleteProgram(m_handle);
+      m_handle = 0;
     }
     
     void use() {

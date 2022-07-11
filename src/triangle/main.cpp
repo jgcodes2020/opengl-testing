@@ -1,15 +1,16 @@
 #include <glbinding/gl/enum.h>
-#include <string_view>
+#include <glbinding/gl/functions.h>
+#include "oglc/handles.hpp"
 #define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
 #include <glbinding/gl/gl.h>
 #include <glbinding/glbinding.h>
-#include <oglc/handles.hpp>
+#include <GLFW/glfw3.h>
 
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(rc);
 
 #include <iostream>
+#include <array>
 
 float vertices[] = {
   -0.5f, -0.5f, 0.0f,
@@ -38,12 +39,15 @@ void setup(GLFWwindow* win) {
   
   // Grab shaders from resource files
   // ================================
-  auto fs = cmrc::rc::get_filesystem();
-  shader = oglc::ShaderProgram {
-    oglc::Shader::fromResource(GL_VERTEX_SHADER, fs.open("/vertex.glsl")),
-    oglc::Shader::fromResource(GL_FRAGMENT_SHADER, fs.open("/fragment.glsl")),
-  };
+  {
+    auto fs = cmrc::rc::get_filesystem();
+    shader = oglc::ShaderProgram {
+      oglc::Shader::fromResource(GL_VERTEX_SHADER, fs.open("/vertex.glsl")),
+      oglc::Shader::fromResource(GL_FRAGMENT_SHADER, fs.open("/fragment.glsl")),
+    };
+  }
   
+  shader.use();
   // Construct VBO/VAO/EBO
   glGenBuffers(1, &vbo);
   glGenBuffers(1, &ebo);
@@ -112,6 +116,7 @@ int main() {
     glfwPollEvents();
   }
   
+  shader.~ShaderProgram();
   glfwTerminate();
   return 0;
 }
