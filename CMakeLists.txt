@@ -30,4 +30,4 @@ target_include_directories(oglc-test PUBLIC "${PROJECT_SOURCE_DIR}/inc")
 
 add_subdirectory(src/01-triangle)
 add_subdirectory(src/02-uniforms)
-add_subdirectory(src/03-textures)
+add_subdirectory(src/03-attributes)

@@ -111,7 +111,6 @@ int main() {
   
   // event loop
   while (!glfwWindowShouldClose(win)) {
-    std::cerr << "Event loop\n";
     input(win);
     render(win);
     
