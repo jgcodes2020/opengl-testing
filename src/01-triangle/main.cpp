@@ -77,16 +77,8 @@ void render(GLFWwindow* win) {
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   
-  // Setup shader
-  {
-    
-    constexpr double f = 2 * std::numbers::pi * 4;
-    double t = glfwGetTime();
-    float osc = (sin(f * t) + 1) / 2;
-    glUseProgram(shader.handle());
-    glUniform4f(2, 0.0f, osc, 0.0f, 1.0f);
-  }
   // Load drawing buffers
+  shader.use();
   glBindVertexArray(vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   

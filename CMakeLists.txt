@@ -20,5 +20,6 @@ macro(opengl_testing_target_setup name)
   target_include_directories(${name} PUBLIC "${PROJECT_SOURCE_DIR}/inc")
 endmacro()
 
-add_subdirectory(src/triangle)
-add_subdirectory(src/uniforms)
+add_subdirectory(src/01-triangle)
+add_subdirectory(src/02-uniforms)
+add_subdirectory(src/03-textures)
