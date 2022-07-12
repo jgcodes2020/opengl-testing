@@ -1,6 +1,10 @@
 #version 330 core
+#extension GL_ARB_explicit_uniform_location : require
+
 out vec4 color;
 
+layout(location = 2) uniform vec4 drawColor;
+
 void main() {
-  color = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+  color = drawColor;
 }

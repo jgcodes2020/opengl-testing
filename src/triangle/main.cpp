@@ -1,5 +1,6 @@
 #include <glbinding/gl/enum.h>
 #include <glbinding/gl/functions.h>
+#include <numbers>
 #include "oglc/handles.hpp"
 #define GLFW_INCLUDE_NONE
 #include <glbinding/gl/gl.h>
@@ -11,6 +12,7 @@ CMRC_DECLARE(rc);
 
 #include <iostream>
 #include <array>
+#include <cmath>
 
 float vertices[] = {
   -0.5f, -0.5f, 0.0f,
@@ -66,7 +68,6 @@ void setup(GLFWwindow* win) {
   // Setup EBO data
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-  
 }
 
 void render(GLFWwindow* win) {
@@ -76,10 +77,20 @@ void render(GLFWwindow* win) {
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   
-  // do our actual rendering
-  shader.use();
+  // Setup shader
+  {
+    
+    constexpr double f = 2 * std::numbers::pi * 4;
+    double t = glfwGetTime();
+    float osc = (sin(f * t) + 1) / 2;
+    glUseProgram(shader.handle());
+    glUniform4f(2, 0.0f, osc, 0.0f, 1.0f);
+  }
+  // Load drawing buffers
   glBindVertexArray(vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  
+  // draw our elements
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }
 
@@ -108,6 +119,7 @@ int main() {
   
   // event loop
   while (!glfwWindowShouldClose(win)) {
+    std::cerr << "Event loop\n";
     input(win);
     render(win);
     

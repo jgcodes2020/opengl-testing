@@ -1,12 +1,17 @@
 #ifndef OGLC_HANDLES_HPP_INCLUDED
 #define OGLC_HANDLES_HPP_INCLUDED
 
+#include <glbinding/gl/enum.h>
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/gl.h>
+#include <glbinding/gl/types.h>
+
 #include <iostream>
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <memory>
+
 #include "cmrc/cmrc.hpp"
 
 // OGLC: OpenGL Classes
@@ -47,11 +52,34 @@ namespace oglc {
       m_handle(gl::glCreateShader(type)) {
       gl::glShaderSource(m_handle, 1, &begin, &len);
       gl::glCompileShader(m_handle);
+      
+      int success;
+      gl::glGetShaderiv(m_handle, gl::GL_COMPILE_STATUS, &success);
+      if (!success) {
+        gl::GLint len;
+        gl::glGetShaderiv(m_handle, gl::GL_INFO_LOG_LENGTH, &len);
+        std::string data(len, '\0');
+        gl::glGetShaderInfoLog(m_handle, len, nullptr, data.data());
+        std::cerr << "Shader compilation failed: " << data << std::endl;
+        throw std::runtime_error("Shader compilation failed");
+      }
+      
     }
     Shader(gl::GLenum type, const char* cstr) :
       m_handle(gl::glCreateShader(type)) {
       gl::glShaderSource(m_handle, 1, &cstr, nullptr);
       gl::glCompileShader(m_handle);
+      
+      int success;
+      gl::glGetShaderiv(m_handle, gl::GL_COMPILE_STATUS, &success);
+      if (!success) {
+        gl::GLint len;
+        gl::glGetShaderiv(m_handle, gl::GL_INFO_LOG_LENGTH, &len);
+        std::string data(len, '\0');
+        gl::glGetShaderInfoLog(m_handle, len, nullptr, data.data());
+        std::cerr << "Shader compilation failed: " << data << std::endl;
+        throw std::runtime_error("Shader compilation failed");
+      }
     }
     
     gl::GLuint m_handle;
@@ -95,6 +123,12 @@ namespace oglc {
       if (m_handle == 0)
         throw std::logic_error("Handle is not assigned to any shader");
       gl::glUseProgram(m_handle);
+    }
+    
+    gl::GLuint handle() {
+      if (m_handle == 0)
+        throw std::logic_error("Handle is not assigned to any shader");
+      return m_handle;
     }
     
   private:

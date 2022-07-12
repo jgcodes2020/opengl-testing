@@ -9,8 +9,16 @@
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(rc);
 
-#include <iostream>
 #include <array>
+#include <cmath>
+#include <iostream>
+
+/*************************
+FLASHING LIGHT WARNING
+This program causes a green rectangle to blink
+on and off fairly rapidly, and may cause
+unintentional floor dancing
+*************************/
 
 float vertices[] = {
   -0.5f, -0.5f, 0.0f,
@@ -78,6 +86,11 @@ void render(GLFWwindow* win) {
   
   // do our actual rendering
   shader.use();
+  {
+    double t = glfwGetTime();
+    float osc = (sin(std::numbers::pi * t) / 2) + 0.5f;
+    glUniform4f(2, 0.0f, osc, 0.0f, 1.0f);
+  }
   glBindVertexArray(vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
@@ -95,6 +108,7 @@ int main() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
   // Create GLFW window
   GLFWwindow* win = glfwCreateWindow(800, 600, "OpenGL Testing", nullptr, nullptr);
   if (win == nullptr) {
