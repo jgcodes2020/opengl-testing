@@ -30,6 +30,9 @@ namespace oglc {
     static_assert(
       std::is_arithmetic_v<T> && !details::is_character_v<T>,
       "Vector should be of arithmetic type");
+      
+    using value_type = T;
+    static constexpr size_t count = N;
 
     constexpr T& operator[](size_t n) { return _m_data[n]; }
     constexpr vec<T, 2> swizzle(size_t x, size_t y) {
@@ -39,7 +42,7 @@ namespace oglc {
       return vec<T, 3> {_m_data[x], _m_data[y], _m_data[z]};
     }
     constexpr vec<T, 4> swizzle(size_t x, size_t y, size_t z, size_t w) {
-      return vec<T, 3> {_m_data[x], _m_data[y], _m_data[z], _m_data[w]};
+      return vec<T, 4> {_m_data[x], _m_data[y], _m_data[z], _m_data[w]};
     }
 
     constexpr T x() { return _m_data[0]; }
@@ -152,6 +155,11 @@ namespace oglc {
     static_assert(
       C >= 2 && C <= 4 && R >= 2 && R <= 4,
       "Matrix dimensions should be between 2x2 and 4x4");
+    
+    using value_type = T;
+    static constexpr size_t columns = C;
+    static constexpr size_t rows = R;
+    
 
     constexpr vec<T, C>& operator[](size_t n) { return _m_data[n]; }
 
