@@ -84,7 +84,6 @@ void setup(GLFWwindow* win) {
         reinterpret_cast<const stbi_uc*>(texture.begin()), texture.size(), &w,
         &h, &nc, 0);
       if (!data) {
-        
         throw std::runtime_error("STB failed to load image");
       }
       glTexImage2D(
